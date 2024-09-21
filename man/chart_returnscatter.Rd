@@ -12,7 +12,10 @@ chart_returnscatter(
   name1 = NULL,
   name2 = NULL,
   title = "Return Scatter Plot",
+  subtitle = "dates",
   trend = T,
+  timescale = "alpha",
+  labels = "dates",
   pts.size = 0.1,
   pts.color = "black",
   lm.size = 0.1,
@@ -20,6 +23,10 @@ chart_returnscatter(
 )
 }
 \arguments{
+\item{timescale}{one of "alpha", "color", or "none"}
+
+\item{labels}{one of "dates" or "none"}
+
 \item{lm.color}{}
 }
 \description{

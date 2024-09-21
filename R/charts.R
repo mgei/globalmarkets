@@ -66,4 +66,58 @@ chart_returnscatter <- function(series1, series2,
     ggplot2::scale_color_viridis_c(option = "plasma")
 }
 
+#' @title Cumulative Growth Chart
+#'
+#' @param ...
+#' @param data
+#' @param field
+#' @param fieldname
+#' @param base
+#' @param name
+#' @param title
+#' @param subtitle
+#' @param timescale
+#' @param labels
+#' @param pts.size
+#' @param pts.color
+#'
+#' @return
+#' @export
+#'
+#' @examples
+chart_cumgrowth <- function(..., data = "prices", field = "adjusted",
+                            fieldname = "symbol",
+                            base = 100, yscalelog = F,
+                            name = NULL, title = "Cumulative Growth Chart",
+                            subtitle = "dates", timescale = "alpha",
+                            labels = "dates", pts.size = 0.1, pts.color = "black") {
+  data_list <- list(...)
+  # min date for each
+  min_date <- max(sapply(data_list, function(x) min(x$date)))
+  if (data == "prices") {
+    df <- dplyr::bind_rows(data_list) |>
+      dplyr::group_by(!!as.name(fieldname)) |>
+      dplyr::mutate(r = !!as.name(field)/dplyr::lag(!!as.name(field))-1) |>
+      dplyr::filter(!is.na(r),
+                    date >= min_date) |>
+      dplyr::mutate(p = cumprod(1+r))
+  } else if (data == "returns") {
+    df <- dplyr::bind_rows(data_list) |>
+      dplyr::group_by(!!as.name(fieldname)) |>
+      dplyr::mutate(r = !!as.name(field)) |>
+      dplyr::filter(!is.na(r),
+                    date >= min_date) |>
+      dplyr::mutate(p = cumprod(1+r))
+  } else {
+    stop("data must be either 'prices' or 'returns'")
+  }
+
+  if (subtitle == "dates") { subtitle <- paste0(min(df$date), " to ", max(df$date)) }
+
+  df |>
+    ggplot2::ggplot(ggplot2::aes(x = date, y = p*base, color = !!as.name(fieldname))) +
+    ggplot2::geom_line() +
+    {if (yscalelog) { ggplot2::scale_y_log10() }}
+}
+
 
