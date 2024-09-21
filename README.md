@@ -1,6 +1,6 @@
 # Globalmarkets
 
-An R package to visualize the current state of global markets. Mostly for my personal use.
+An R package to visualize the current state of global markets. Assembled for my personal use.
 
 
 ## Installation
